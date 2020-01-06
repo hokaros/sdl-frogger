@@ -2,8 +2,9 @@
 #include<math.h>
 #include<stdio.h>
 #include<string.h>
-#include "MovingHor.h"
 #include "Draw.h"
+#include "MovingFree.h"
+#include "MovingHor.h"
 
 extern "C" {
 #include"SDL2-2.0.10/include/SDL.h"
@@ -25,6 +26,7 @@ int main(int argc, char **argv) {
 	SDL_Surface *screen, *charset;
 	SDL_Surface *eti;
 	SDL_Surface* background;
+	SDL_Surface* froggerSf;
 	SDL_Texture *scrtex;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -75,9 +77,9 @@ int main(int argc, char **argv) {
 	SDL_ShowCursor(SDL_DISABLE);
 
 	//wczytanie t³a
-	background = SDL_LoadBMP("graphics/background.bmp");
+	background = SDL_LoadBMP("graphics/background1.bmp");
 	if (background == NULL) {
-		printf("SDL_LoadBMP(graphics/background.bmp) error: %s\n", SDL_GetError());
+		printf("SDL_LoadBMP(graphics/background1.bmp) error: %s\n", SDL_GetError());
 		SDL_FreeSurface(screen);
 		SDL_DestroyTexture(scrtex);
 		SDL_DestroyWindow(window);
@@ -112,7 +114,21 @@ int main(int argc, char **argv) {
 		SDL_DestroyRenderer(renderer);
 		SDL_Quit();
 		return 1;
-		};
+	};
+
+	froggerSf = SDL_LoadBMP("graphics/frogger.bmp");
+	if (froggerSf == NULL) {
+		printf("SDL_LoadBMP(graphics/frogger.bmp) error: %s\n", SDL_GetError());
+		SDL_FreeSurface(background);
+		SDL_FreeSurface(charset);
+		SDL_FreeSurface(screen);
+		SDL_FreeSurface(eti);
+		SDL_DestroyTexture(scrtex);
+		SDL_DestroyWindow(window);
+		SDL_DestroyRenderer(renderer);
+		SDL_Quit();
+		return 1;
+	}
 
 	char text[128];
 	int czarny = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
@@ -129,9 +145,20 @@ int main(int argc, char **argv) {
 	worldTime = 0;
 	distance = 0;
 	etiSpeed = 1;
+	Velocity movableSpeed = {100, Direction::Right};
 
-	Area rect(-100, 0, eti, screen);
-	MovingHor movable(rect, 100, DirectionHor::right,0, 2 *SCREEN_WIDTH);
+	const int MAP_BOTTOM_BORDER = background->h;
+	const int MAP_LEFT_BORDER = (SCREEN_WIDTH - background->w) / 2;
+	const int MAP_TOP_BORDER = MAP_BOTTOM_BORDER - froggerSf->h*13;
+	const int MAP_RIGHT_BORDER = MAP_LEFT_BORDER + background->w;
+
+
+	Area rect(0, 0, eti, screen);
+	Area frogger(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - froggerSf->h, froggerSf, screen);
+
+	MovingHor movable(rect, movableSpeed, 0, 2 *SCREEN_WIDTH);
+
+	MovingFree userFrog(frogger, MAP_TOP_BORDER, MAP_RIGHT_BORDER, MAP_BOTTOM_BORDER, MAP_LEFT_BORDER);
 
 	while(!quit) {
 		t2 = SDL_GetTicks();
@@ -151,7 +178,7 @@ int main(int argc, char **argv) {
 
 		//generowanie t³a
 		SDL_FillRect(screen, NULL, czarny);
-		DrawSurface(screen, background, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+		DrawSurface(screen, background, SCREEN_WIDTH / 2, background->h / 2);
 
 
 		DrawSurface(screen, eti,
@@ -159,6 +186,8 @@ int main(int argc, char **argv) {
 			    SCREEN_HEIGHT / 2 + cos(distance) * SCREEN_HEIGHT / 3);
 
 		movable.Move(delta);
+
+		userFrog.ProcessState(delta);
 
 		fpsTimer += delta;
 		if(fpsTimer > 0.5) {
@@ -187,10 +216,19 @@ int main(int argc, char **argv) {
 			switch(event.type) {
 			case SDL_KEYDOWN:
 				if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-				else if(event.key.keysym.sym == SDLK_UP) etiSpeed = 2.0;
-				else if(event.key.keysym.sym == SDLK_DOWN) etiSpeed = 0.3;
-				else if (event.key.keysym.sym == SDLK_i) {
-					printf("%d", sizeof event.type);
+				else if (event.key.keysym.sym == SDLK_UP) {
+					etiSpeed = 2.0;
+					userFrog.Move(Direction::Up);
+				}
+				else if(event.key.keysym.sym == SDLK_DOWN) {
+					etiSpeed = 0.3;
+					userFrog.Move(Direction::Down);
+				}
+				else if (event.key.keysym.sym == SDLK_RIGHT) {
+					userFrog.Move(Direction::Right);
+				}
+				else if (event.key.keysym.sym == SDLK_LEFT) {
+					userFrog.Move(Direction::Left);
 				}
 				break;
 			case SDL_KEYUP:
@@ -211,6 +249,7 @@ int main(int argc, char **argv) {
 	SDL_FreeSurface(background);
 	SDL_FreeSurface(charset);
 	SDL_FreeSurface(screen);
+	SDL_FreeSurface(froggerSf);
 	SDL_DestroyTexture(scrtex);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

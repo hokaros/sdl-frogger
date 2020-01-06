@@ -1,10 +1,8 @@
 #include "MovingHor.h"
 
 void MovingHor::Move(double deltaTime) {
-	pixelsToMove += direction*pixelsPerSecond*deltaTime;
-	x += floor(pixelsToMove);
-	pixelsToMove -= floor(pixelsToMove);
-	if (direction == right) {
+	Moving::Move(deltaTime);
+	if (velocity.direction == Direction::Right) {
 		if (x + width >= rightBoundary) {
 			x = leftBoundary-width;
 		}
@@ -14,14 +12,10 @@ void MovingHor::Move(double deltaTime) {
 			x = rightBoundary;
 		}
 	}
-	this->Draw();
 }
 
-MovingHor::MovingHor(Area a, int pixelsPerSecond, DirectionHor direction, int leftBoundary, int rightBoundary)
-	: Area(a) {
-	this->pixelsPerSecond = pixelsPerSecond;
-	this->direction = direction;
+MovingHor::MovingHor(Area a, Velocity velocity, int leftBoundary, int rightBoundary)
+	: Moving(a, velocity) {
 	this->leftBoundary = leftBoundary;
 	this->rightBoundary = rightBoundary;
-	pixelsToMove = 0;
 }
