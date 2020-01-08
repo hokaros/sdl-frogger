@@ -22,7 +22,7 @@ void Area::Draw() {
 	DrawSurface(screen, bmp, center.x, center.y);
 }
 
-bool IsPointInside(VectorInt p, Rectangle r) {
+bool Area::IsPointInside(VectorInt p, Rectangle r) {
 	if (p.x >= r.x
 		&& p.x <= r.x + r.width
 		&& p.y >= r.y
@@ -37,12 +37,12 @@ bool Area::IsCenterInside(Rectangle r) {
 	return IsPointInside(center, r);
 }
 
-//bool Area::IsInside(Rectangle r) {
-//	if (IsPointInside({ x,y }, r)
-//		&& IsPointInside({ x,y + height }, r)
-//		&& IsPointInside({ x + width,y }, r)
-//		&& IsPointInside({ x + width,y + height }, r))
-//		return true;
-//	else
-//		return false;
-//}
+bool Area::IsInside(Rectangle r) {
+	if (IsPointInside({ x,y }, r)
+		&& IsPointInside({ x,y + height }, r)
+		&& IsPointInside({ x + width,y }, r)
+		&& IsPointInside({ x + width,y + height }, r))
+		return true;
+	else
+		return false;
+}

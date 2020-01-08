@@ -37,6 +37,6 @@ public:
 	static bool IsPointInside(VectorInt p, Rectangle rectangle);
 	bool IsCenterInside(Rectangle rectangle);
 	//sprawdza, czy obiekt jest ca³kowicie w polu rectangle
-	//bool IsInside(Rectangle rectangle);
+	bool IsInside(Rectangle rectangle);
 };
 

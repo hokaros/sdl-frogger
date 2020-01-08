@@ -211,9 +211,9 @@ int main(int argc, char **argv) {
 		}
 		else {
 			longLog.Move(delta);
+			if (userFrog.IsInside(water))
+				printf("We are sinking!");
 		}
-		/*if (userFrog.IsInside(water))
-			printf("We are sinking!");*/
 
 		userFrog.ProcessState(delta);
 
