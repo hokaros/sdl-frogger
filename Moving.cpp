@@ -18,6 +18,7 @@ VectorInt Moving::Move(double deltaTime) {
 		return pixelsMoved;
 	}
 	this->Draw();
+	return { 0,0 };
 }
 
 void Moving::MoveByVector(VectorInt vector) {

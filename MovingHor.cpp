@@ -1,5 +1,11 @@
 #include "MovingHor.h"
 
+MovingHor::MovingHor(Area a, Vector velocity, int leftBoundary, int rightBoundary)
+	: Moving(a, velocity) {
+	this->leftBoundary = leftBoundary;
+	this->rightBoundary = rightBoundary;
+}
+
 VectorInt MovingHor::Move(double deltaTime) {
 	VectorInt pixelsMoved = Moving::Move(deltaTime);
 	if (velocity.x > 0) {
@@ -13,10 +19,4 @@ VectorInt MovingHor::Move(double deltaTime) {
 		}
 	}
 	return pixelsMoved;
-}
-
-MovingHor::MovingHor(Area a, Vector velocity, int leftBoundary, int rightBoundary)
-	: Moving(a, velocity) {
-	this->leftBoundary = leftBoundary;
-	this->rightBoundary = rightBoundary;
 }

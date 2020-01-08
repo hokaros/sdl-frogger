@@ -1,14 +1,6 @@
-﻿  Attachable.cpp
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.h(10,1): error C2059: błąd składniowy: „<<”
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.h(12,59): error C2238: nieoczekiwany(e) token(y) poprzedzający(e) ";"
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.h(13,1): error C2059: błąd składniowy: „>>”
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.h(14,1): error C2143: błąd składniowy: brakuje „;” przed „}”
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.h(14,1): error C2238: nieoczekiwany(e) token(y) poprzedzający(e) ";"
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.cpp(10,1): error C2059: błąd składniowy: „<<”
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.cpp(23,18): error C2039: „MoveWith”: Nie jest składową „Attachable”
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.h(4): message : zobacz deklarację „Attachable”
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.cpp(24,26): error C3861: "Move": identyfikatora nie odnaleziono
-C:\Users\kubas\Desktop\PPProjekt\P2\Attachable.cpp(26,1): error C2059: błąd składniowy: „>>”
-  Game.cpp
-  Level.cpp
-  Generowanie kodu...
+﻿  Moving.cpp
+C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,34): warning C4838: konwersja z „double” do „int” wymaga konwersji zawężającej
+C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,34): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,57): warning C4838: konwersja z „double” do „int” wymaga konwersji zawężającej
+C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,57): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
+  szablon2vs19.vcxproj -> C:\Users\kubas\Desktop\PPProjekt\P2\Debug\szablon2vs19.exe
