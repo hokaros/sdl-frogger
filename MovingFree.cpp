@@ -5,10 +5,10 @@ MovingFree::MovingFree(Area a)
 }
 
 MovingFree::MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary) 
-	:Moving(a, ZERO_VELOCITY){
+	:Moving(a, ZERO_VECTOR){
 	facing = Direction::Up;
 	moving = false;
-	targetPos = 0;
+	targetPos = { x, y };
 	moveAxis = NULL;
 	nextMove = Direction::None;
 	this->topBoundary = topBoundary;
@@ -30,6 +30,7 @@ void MovingFree::Move(Direction direction) {
 				factor = 1;
 			else
 				factor = -1;
+			targetPos.x = x + factor * JUMP_DISTANCE;
 		}
 		else {
 			moveAxis = &y;
@@ -37,51 +38,58 @@ void MovingFree::Move(Direction direction) {
 				factor = 1;
 			else
 				factor = -1;
+			targetPos.y = y + factor * JUMP_DISTANCE;
 		}
-		targetPos = *moveAxis + factor * JUMP_DISTANCE;
 		switch (direction) {
 		case Direction::Right:
-			if (targetPos+width > rightBoundary)
-				targetPos = rightBoundary-width;
+			if (targetPos.x+width > rightBoundary)
+				targetPos.x = rightBoundary-width;
 			break;
 		case Direction::Down:
-			if (targetPos+height > bottomBoundary)
-				targetPos = bottomBoundary-height;
+			if (targetPos.y+height > bottomBoundary)
+				targetPos.y = bottomBoundary-height;
 			break;
 		case Direction::Left:
-			if (targetPos < leftBoundary)
-				targetPos = leftBoundary;
+			if (targetPos.x < leftBoundary)
+				targetPos.x = leftBoundary;
 			break;
 		case Direction::Up:
-			if (targetPos < topBoundary)
-				targetPos = topBoundary;
+			if (targetPos.y < topBoundary)
+				targetPos.y = topBoundary;
 			break;
 		}
-		velocity = { 0, direction };
+		velocity = ZERO_VECTOR;
 	}
 	else {
 		nextMove = direction;
 	}
 }
 
+void MovingFree::MoveByVector(VectorInt vector) {
+	x += vector.x;
+	y += vector.y;
+	targetPos.x += vector.x;
+	targetPos.y += vector.y;
+}
+
 void MovingFree::ProcessState(double deltaTime) {
 	if (moving) {
-		if (targetPos >= *moveAxis)
-			velocity.pixelsPerSecond = JUMP_SPEED * (targetPos - *moveAxis);
-		else
-			velocity.pixelsPerSecond = JUMP_SPEED * (*moveAxis - targetPos);
+		velocity.x = JUMP_SPEED * (targetPos.x - x);
+		velocity.y = JUMP_SPEED * (targetPos.y - y);
 		Moving::Move(deltaTime);
 
-		if (targetPos == *moveAxis){
+		if (targetPos.x == x && targetPos.y == y){
 			moving = false;
 		}
 	}
-	else if (nextMove != Direction::None) {
-		Move(nextMove);
-		nextMove = Direction::None;
-	}
 	else {
-		velocity = ZERO_VELOCITY;
-		Moving::Move(deltaTime);
+		velocity = ZERO_VECTOR;
+		if (nextMove != Direction::None) {
+			Move(nextMove);
+			nextMove = Direction::None;
+		}
+		else {
+			Moving::Move(deltaTime);
+		}
 	}
 }

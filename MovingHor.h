@@ -8,7 +8,9 @@ protected:
 	int leftBoundary; //granice ruchu
 	int rightBoundary;
 public:
-	MovingHor(Area a, Velocity velocity, int leftBoundary, int rightBoundary);
-	void Move(double deltaTime);
+	MovingHor(Area a, Vector velocity, int leftBoundary, int rightBoundary);
+	/*podczas ruchu dodatkowo sprawdzane jest,
+	czy obiekt nie wyszed³ poza granice*/
+	VectorInt Move(double deltaTime);
 };
 
