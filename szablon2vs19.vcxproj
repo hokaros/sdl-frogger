@@ -20,6 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Area.cpp" />
+    <ClCompile Include="Attachable.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Moving.cpp" />
     <ClCompile Include="MovingFree.cpp" />
@@ -32,7 +35,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Area.h" />
+    <ClInclude Include="Attachable.h" />
     <ClInclude Include="Draw.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="Moving.h" />
     <ClInclude Include="MovingFree.h" />
     <ClInclude Include="MovingHor.h" />

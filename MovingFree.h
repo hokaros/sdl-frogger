@@ -23,12 +23,14 @@ protected:
 	int* moveAxis;
 	//zapamiêtywanie drugiego ruchu w kolejce
 	Direction nextMove;
-	//po zainicjowaniu ruchu pozycja d¹¿y do docelowej
-	int targetPos;
 public:
+	//po zainicjowaniu ruchu pozycja d¹¿y do docelowej
+	VectorInt targetPos;
+
 	MovingFree(Area a);
 	MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary);
 	void Move(Direction direction);
+	void MoveByVector(VectorInt vector);
 	void ProcessState(double deltaTime);
 };
 

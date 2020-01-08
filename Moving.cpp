@@ -1,34 +1,26 @@
 #include "Moving.h"
 
-Moving::Moving(Area a, Velocity velocity) 
+Moving::Moving(Area a, Vector velocity) 
 	:Area(a){
 	this->velocity = velocity;
-	this->pixelsToMove = 0;
+	this->pixelsToMove = ZERO_VECTOR;
 }
 
-void Moving::Move(double deltaTime) {
-	if (velocity.pixelsPerSecond != 0) {
-		int* axis;
-		int factor;
-		Direction direction = velocity.direction;
-		if (direction == Direction::Right
-			|| direction == Direction::Left) {
-			axis = &x;
-			if (direction == Direction::Right)
-				factor = 1; //zwiêkszanie x
-			else
-				factor = -1; //zmniejszanie x
-		}
-		else {
-			axis = &y;
-			if (direction == Direction::Down)
-				factor = 1; //oœ Y skierowana w dó³
-			else
-				factor = -1;
-		}
-		pixelsToMove += factor * (velocity.pixelsPerSecond * deltaTime);
-		*axis += floor(pixelsToMove);
-		pixelsToMove -= floor(pixelsToMove);
+VectorInt Moving::Move(double deltaTime) {
+	if (velocity.x != 0 || velocity.y != 0) {
+		pixelsToMove.x += (velocity.x * deltaTime);
+		pixelsToMove.y += (velocity.y * deltaTime);
+		VectorInt pixelsMoved = { floor(pixelsToMove.x), floor(pixelsToMove.y) };
+		MoveByVector(pixelsMoved);
+		pixelsToMove.x -= pixelsMoved.x;
+		pixelsToMove.y -= pixelsMoved.y;
+		this->Draw();
+		return pixelsMoved;
 	}
 	this->Draw();
+}
+
+void Moving::MoveByVector(VectorInt vector) {
+	x += (vector.x);
+	y += (vector.y);
 }

@@ -1,2 +1,9 @@
-﻿  MovingFree.cpp
-  szablon2vs19.vcxproj -> C:\Users\kubas\Desktop\PPProjekt\P2\Debug\szablon2vs19.exe
+﻿  main.cpp
+C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(205,26): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(204,32): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(230,2): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
+C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(233,2): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
+Area.obj : error LNK2019: nierozpoznany zewnętrzny symbol "public: static bool __cdecl Area::IsPointInside(struct vectorInt,struct rectangle)" (?IsPointInside@Area@@SA_NUvectorInt@@Urectangle@@@Z) przywołany w funkcji "public: bool __thiscall Area::IsCenterInside(struct rectangle)" (?IsCenterInside@Area@@QAE_NUrectangle@@@Z)
+C:\Users\kubas\Desktop\PPProjekt\P2\Debug\szablon2vs19.exe : fatal error LNK1120: liczba nierozpoznanych elementów zewnętrznych: 1

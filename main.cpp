@@ -5,6 +5,7 @@
 #include "Draw.h"
 #include "MovingFree.h"
 #include "MovingHor.h"
+#include "Attachable.h"
 
 extern "C" {
 #include"SDL2-2.0.10/include/SDL.h"
@@ -26,7 +27,7 @@ int main(int argc, char **argv) {
 	SDL_Surface *screen, *charset;
 	SDL_Surface *eti;
 	SDL_Surface* background;
-	SDL_Surface* froggerSf;
+	SDL_Surface* froggerSf, *longLogSf;
 	SDL_Texture *scrtex;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -129,6 +130,21 @@ int main(int argc, char **argv) {
 		SDL_Quit();
 		return 1;
 	}
+	longLogSf = SDL_LoadBMP("graphics/logLong.bmp");
+	if (longLogSf == NULL) {
+		printf("SDL_LoadBMP(graphics/logLong.bmp) error: %s\n", SDL_GetError());
+		SDL_FreeSurface(froggerSf);
+		SDL_FreeSurface(background);
+		SDL_FreeSurface(charset);
+		SDL_FreeSurface(screen);
+		SDL_FreeSurface(eti);
+		SDL_DestroyTexture(scrtex);
+		SDL_DestroyWindow(window);
+		SDL_DestroyRenderer(renderer);
+		SDL_Quit();
+		return 1;
+	}
+	const int ROW_HEIGHT = froggerSf->h;
 
 	char text[128];
 	int czarny = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
@@ -145,18 +161,21 @@ int main(int argc, char **argv) {
 	worldTime = 0;
 	distance = 0;
 	etiSpeed = 1;
-	Velocity movableSpeed = {100, Direction::Right};
+	Vector movableSpeed = {100, 0};
 
 	const int MAP_BOTTOM_BORDER = background->h;
 	const int MAP_LEFT_BORDER = (SCREEN_WIDTH - background->w) / 2;
-	const int MAP_TOP_BORDER = MAP_BOTTOM_BORDER - froggerSf->h*13;
+	const int MAP_TOP_BORDER = MAP_BOTTOM_BORDER - ROW_HEIGHT*13;
 	const int MAP_RIGHT_BORDER = MAP_LEFT_BORDER + background->w;
 
+	Rectangle water = { MAP_LEFT_BORDER, MAP_TOP_BORDER + ROW_HEIGHT, background->w, ROW_HEIGHT * 5 };
 
 	Area rect(0, 0, eti, screen);
 	Area frogger(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - froggerSf->h, froggerSf, screen);
+	Area longLogA(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 8, longLogSf, screen);
 
 	MovingHor movable(rect, movableSpeed, 0, 2 *SCREEN_WIDTH);
+	Attachable longLog(longLogA, movableSpeed, 0, 2 * SCREEN_WIDTH);
 
 	MovingFree userFrog(frogger, MAP_TOP_BORDER, MAP_RIGHT_BORDER, MAP_BOTTOM_BORDER, MAP_LEFT_BORDER);
 
@@ -186,6 +205,15 @@ int main(int argc, char **argv) {
 			    SCREEN_HEIGHT / 2 + cos(distance) * SCREEN_HEIGHT / 3);
 
 		movable.Move(delta);
+		if (longLog.IsAttached(userFrog)) {
+			printf("Attached!");
+			userFrog.MoveByVector(longLog.Move(delta));
+		}
+		else {
+			longLog.Move(delta);
+		}
+		/*if (userFrog.IsInside(water))
+			printf("We are sinking!");*/
 
 		userFrog.ProcessState(delta);
 
