@@ -22,6 +22,7 @@
     <ClCompile Include="Area.cpp" />
     <ClCompile Include="Attachable.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Killing.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Moving.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="Attachable.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Killing.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Moving.h" />
     <ClInclude Include="MovingFree.h" />

@@ -10,7 +10,7 @@ VectorInt Moving::Move(double deltaTime) {
 	if (velocity.x != 0 || velocity.y != 0) {
 		pixelsToMove.x += (velocity.x * deltaTime);
 		pixelsToMove.y += (velocity.y * deltaTime);
-		VectorInt pixelsMoved = { floor(pixelsToMove.x), floor(pixelsToMove.y) };
+		VectorInt pixelsMoved = { (int)pixelsToMove.x, (int)pixelsToMove.y };
 		MoveByVector(pixelsMoved);
 		pixelsToMove.x -= pixelsMoved.x;
 		pixelsToMove.y -= pixelsMoved.y;

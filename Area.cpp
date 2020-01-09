@@ -46,3 +46,27 @@ bool Area::IsInside(Rectangle r) {
 	else
 		return false;
 }
+
+bool Area::DoesCross(Rectangle r) {
+	VectorInt corner = { x, y };  //lewy, górny róg
+	if (IsPointInside(corner, r) 
+		&& corner.y != r.y+r.height
+		&& corner.x != r.x+r.width)
+		return true;
+	corner = { x, y + height }; //lewy, dolny róg
+	if (IsPointInside(corner, r)
+		&& corner.y != r.y
+		&& corner.x != r.x + r.width)
+		return true;
+	corner = { x + width, y }; //prawy, górny róg
+	if (IsPointInside(corner, r)
+		&& corner.y != r.y + r.height
+		&& corner.x != r.x)
+		return true;
+	corner = { x + width, y + height }; //prawy, dolny róg
+	if (IsPointInside(corner, r)
+		&& corner.y != r.y
+		&& corner.x != r.x)
+		return true;
+	return false;
+}

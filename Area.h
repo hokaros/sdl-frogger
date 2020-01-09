@@ -38,5 +38,7 @@ public:
 	bool IsCenterInside(Rectangle rectangle);
 	//sprawdza, czy obiekt jest ca³kowicie w polu rectangle
 	bool IsInside(Rectangle rectangle);
+	//sprawdza, czy obiekt przecina pole
+	bool DoesCross(Rectangle rectangle);
 };
 

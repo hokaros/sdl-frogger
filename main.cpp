@@ -7,6 +7,7 @@
 #include "Attachable.h"
 #include "Game.h"
 #include "Timer.h"
+#include "Killing.h"
 
 extern "C" {
 #include"SDL2-2.0.10/include/SDL.h"
@@ -29,7 +30,7 @@ int main(int argc, char **argv) {
 	SDL_Surface *screen, *charset;
 	SDL_Surface *eti;
 	SDL_Surface* background;
-	SDL_Surface* froggerSf, *longLogSf;
+	SDL_Surface* froggerSf, *longLogSf, *car1Sf;
 	SDL_Texture *scrtex;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -146,6 +147,22 @@ int main(int argc, char **argv) {
 		SDL_Quit();
 		return 1;
 	}
+	car1Sf = SDL_LoadBMP("graphics/car1.bmp");
+	if (car1Sf == NULL) {
+		printf("SDL_LoadBMP(graphics/car1.bmp) error: %s\n", SDL_GetError());
+		SDL_FreeSurface(longLogSf);
+		SDL_FreeSurface(froggerSf);
+		SDL_FreeSurface(background);
+		SDL_FreeSurface(charset);
+		SDL_FreeSurface(screen);
+		SDL_FreeSurface(eti);
+		SDL_DestroyTexture(scrtex);
+		SDL_DestroyWindow(window);
+		SDL_DestroyRenderer(renderer);
+		SDL_Quit();
+		return 1;
+	}
+
 	const int ROW_HEIGHT = froggerSf->h;
 
 	char text[128];
@@ -159,7 +176,9 @@ int main(int argc, char **argv) {
 	quit = 0;
 	distance = 0;
 	etiSpeed = 1;
+	//obiekty poruszaj¹ce siê w lewo maj¹ ujemn¹ wspó³rzêdn¹ x wektora prêdkoœci
 	Vector movableSpeed = {100, 0};
+	Vector car1Speed = { -150, 0 };
 
 	const int MAP_BOTTOM_BORDER = background->h;
 	const int MAP_LEFT_BORDER = (SCREEN_WIDTH - background->w) / 2;
@@ -171,9 +190,11 @@ int main(int argc, char **argv) {
 	Area rect(0, 0, eti, screen);
 	Area frogger(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - froggerSf->h, froggerSf, screen);
 	Area longLogA(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 8, longLogSf, screen);
+	Area car1(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 2, car1Sf, screen);
 
-	MovingHor movable(rect, movableSpeed, 0, 2 *SCREEN_WIDTH);
-	Attachable longLog(longLogA, movableSpeed, 0, 2 * SCREEN_WIDTH);
+	MovingHor movable(rect, movableSpeed, MAP_LEFT_BORDER, MAP_RIGHT_BORDER+background->w);
+	Attachable longLog(longLogA, movableSpeed, MAP_LEFT_BORDER, MAP_RIGHT_BORDER + background->w);
+	Killing car({0,0,car1.width, car1.height}, car1, car1Speed, MAP_LEFT_BORDER-background->w, MAP_RIGHT_BORDER);
 
 	MovingFree userFrog(frogger, MAP_TOP_BORDER, MAP_RIGHT_BORDER, MAP_BOTTOM_BORDER, MAP_LEFT_BORDER);
 
@@ -183,15 +204,11 @@ int main(int argc, char **argv) {
 
 		distance += etiSpeed * delta;
 
+
 		//generowanie t³a
 		SDL_FillRect(screen, NULL, czarny);
 		DrawSurface(screen, background, SCREEN_WIDTH / 2, background->h / 2);
-
-
-		DrawSurface(screen, eti,
-		            SCREEN_WIDTH / 2 + sin(distance) * SCREEN_HEIGHT / 3,
-			    SCREEN_HEIGHT / 2 + cos(distance) * SCREEN_HEIGHT / 3);
-
+		//ruchy obiektów
 		movable.Move(delta);
 		if (longLog.IsAttached(userFrog)) {
 			userFrog.MoveByVector(longLog.Move(delta));
@@ -202,6 +219,19 @@ int main(int argc, char **argv) {
 
 			}
 		}
+		car.Move(delta);
+		if (car.DoesKill(userFrog)) {
+			userFrog.MoveByVector({ 200, 0 });
+		}
+		//czarne pasy po bokach ekranu
+		DrawRectangle(screen, 0, 0, MAP_LEFT_BORDER, SCREEN_HEIGHT, czarny, czarny);
+		DrawRectangle(screen, MAP_RIGHT_BORDER, 0, MAP_LEFT_BORDER, SCREEN_HEIGHT, czarny, czarny);
+
+
+
+		DrawSurface(screen, eti,
+		            SCREEN_WIDTH / 2 + sin(distance) * SCREEN_HEIGHT / 3,
+			    SCREEN_HEIGHT / 2 + cos(distance) * SCREEN_HEIGHT / 3);
 
 		userFrog.ProcessState(delta);
 		if (!userFrog.IsInside({ MAP_LEFT_BORDER, MAP_TOP_BORDER, MAP_RIGHT_BORDER - MAP_LEFT_BORDER,MAP_BOTTOM_BORDER - MAP_TOP_BORDER })) {
