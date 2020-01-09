@@ -6,6 +6,7 @@
 #include "MovingFree.h"
 #include "MovingHor.h"
 #include "Attachable.h"
+#include "Game.h"
 
 extern "C" {
 #include"SDL2-2.0.10/include/SDL.h"
@@ -21,6 +22,7 @@ extern "C" {
 extern "C"
 #endif
 int main(int argc, char **argv) {
+	Game game;
 	int t1, t2, quit, frames, rc;
 	double delta, worldTime, fpsTimer, fps, distance, etiSpeed;
 	SDL_Event event;
@@ -206,16 +208,19 @@ int main(int argc, char **argv) {
 
 		movable.Move(delta);
 		if (longLog.IsAttached(userFrog)) {
-			printf("Attached!");
 			userFrog.MoveByVector(longLog.Move(delta));
 		}
 		else {
 			longLog.Move(delta);
-			if (userFrog.IsInside(water))
-				printf("We are sinking!");
+			if (userFrog.IsInside(water)) {
+
+			}
 		}
 
 		userFrog.ProcessState(delta);
+		if (!userFrog.IsInside({ MAP_LEFT_BORDER, MAP_TOP_BORDER, MAP_RIGHT_BORDER - MAP_LEFT_BORDER,MAP_BOTTOM_BORDER - MAP_TOP_BORDER })) {
+			game.LoseLife();
+		}
 
 		fpsTimer += delta;
 		if(fpsTimer > 0.5) {

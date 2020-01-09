@@ -1,7 +1,7 @@
 #pragma once
 #include "Draw.h"
 #include "Level.h"
-#define MAX_LIVES 3
+#define MAX_LIVES 5
 #define LAST_LEVEL 6
 
 class Game
@@ -12,6 +12,8 @@ protected:
 	int level;
 	Level currentLevel;
 
+	bool paused;
+
 	void LevelUp();
 	void Win();
 	void Lose();
@@ -19,5 +21,7 @@ protected:
 public:
 	Game();
 	void ShowMenu();
+	void LoseLife();
+	void ProcessState();
 
 };

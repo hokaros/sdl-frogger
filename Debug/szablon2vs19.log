@@ -1,6 +1,2 @@
-﻿  Moving.cpp
-C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,34): warning C4838: konwersja z „double” do „int” wymaga konwersji zawężającej
-C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,34): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
-C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,57): warning C4838: konwersja z „double” do „int” wymaga konwersji zawężającej
-C:\Users\kubas\Desktop\PPProjekt\P2\Moving.cpp(13,57): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
+﻿  Game.cpp
   szablon2vs19.vcxproj -> C:\Users\kubas\Desktop\PPProjekt\P2\Debug\szablon2vs19.exe
