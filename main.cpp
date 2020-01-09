@@ -4,9 +4,9 @@
 #include<string.h>
 #include "Draw.h"
 #include "MovingFree.h"
-#include "MovingHor.h"
 #include "Attachable.h"
 #include "Game.h"
+#include "Timer.h"
 
 extern "C" {
 #include"SDL2-2.0.10/include/SDL.h"
@@ -23,8 +23,8 @@ extern "C"
 #endif
 int main(int argc, char **argv) {
 	Game game;
-	int t1, t2, quit, frames, rc;
-	double delta, worldTime, fpsTimer, fps, distance, etiSpeed;
+	int quit, rc;
+	double distance, etiSpeed, delta;
 	SDL_Event event;
 	SDL_Surface *screen, *charset;
 	SDL_Surface *eti;
@@ -154,13 +154,9 @@ int main(int argc, char **argv) {
 	int czerwony = SDL_MapRGB(screen->format, 0xFF, 0x00, 0x00);
 	int niebieski = SDL_MapRGB(screen->format, 0x11, 0x11, 0xCC);
 
-	t1 = SDL_GetTicks();
+	Timer timer;
 
-	frames = 0;
-	fpsTimer = 0;
-	fps = 0;
 	quit = 0;
-	worldTime = 0;
 	distance = 0;
 	etiSpeed = 1;
 	Vector movableSpeed = {100, 0};
@@ -182,18 +178,8 @@ int main(int argc, char **argv) {
 	MovingFree userFrog(frogger, MAP_TOP_BORDER, MAP_RIGHT_BORDER, MAP_BOTTOM_BORDER, MAP_LEFT_BORDER);
 
 	while(!quit) {
-		t2 = SDL_GetTicks();
 
-		// w tym momencie t2-t1 to czas w milisekundach,
-		// jaki uplyna³ od ostatniego narysowania ekranu
-		// delta to ten sam czas w sekundach
-		// here t2-t1 is the time in milliseconds since
-		// the last screen was drawn
-		// delta is the same time in seconds
-		delta = (t2 - t1) * 0.001;
-		t1 = t2;
-
-		worldTime += delta;
+		delta = timer.GetDeltaTime();
 
 		distance += etiSpeed * delta;
 
@@ -222,17 +208,10 @@ int main(int argc, char **argv) {
 			game.LoseLife();
 		}
 
-		fpsTimer += delta;
-		if(fpsTimer > 0.5) {
-			fps = frames * 2;
-			frames = 0;
-			fpsTimer -= 0.5;
-			};
-
 		// tekst informacyjny / info text
 		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 36, czerwony, niebieski);
 		//            "template for the second project, elapsed time = %.1lf s  %.0lf frames / s"
-		sprintf(text, "Szablon drugiego zadania, czas trwania = %.1lf s  %.0lf klatek / s", worldTime, fps);
+		sprintf(text, "Szablon drugiego zadania, czas trwania = %.1lf s  %.0lf klatek / s", timer.worldTime, timer.GetFps(delta));
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
 		//	      "Esc - exit, \030 - faster, \031 - slower"
 		sprintf(text, "Esc - wyjscie, \030 - przyspieszenie, \031 - zwolnienie");
@@ -275,7 +254,7 @@ int main(int argc, char **argv) {
 				break;
 			};
 		};
-		frames++;
+		timer.frames++;
 	};
 
 	// zwolnienie powierzchni / freeing all surfaces
