@@ -190,11 +190,22 @@ int main(int argc, char **argv) {
 	Area rect(0, 0, eti, screen);
 	Area frogger(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - froggerSf->h, froggerSf, screen);
 	Area longLogA(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 8, longLogSf, screen);
-	Area car1(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 2, car1Sf, screen);
+
+	/*******************************PRZESZKODY*********************************/
+	int car1Count = 5;
+	Area car1A(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 2, car1Sf, screen);
+	int car1Gap = 3 * car1A.width;
+
+	Killing** car1 = new Killing * [car1Count];
+	for (int i = 0; i < car1Count; i++) {
+		car1[i] = new Killing({ 0,0,car1A.width, car1A.height }, //œmiercionoœny na ca³ej powierzchni
+			car1A, car1Speed, MAP_LEFT_BORDER - background->w, MAP_RIGHT_BORDER);
+		car1[i]->x += i*(car1[i]->width + car1Gap);
+	}
+
 
 	MovingHor movable(rect, movableSpeed, MAP_LEFT_BORDER, MAP_RIGHT_BORDER+background->w);
 	Attachable longLog(longLogA, movableSpeed, MAP_LEFT_BORDER, MAP_RIGHT_BORDER + background->w);
-	Killing car({0,0,car1.width, car1.height}, car1, car1Speed, MAP_LEFT_BORDER-background->w, MAP_RIGHT_BORDER);
 
 	MovingFree userFrog(frogger, MAP_TOP_BORDER, MAP_RIGHT_BORDER, MAP_BOTTOM_BORDER, MAP_LEFT_BORDER);
 
@@ -219,9 +230,11 @@ int main(int argc, char **argv) {
 
 			}
 		}
-		car.Move(delta);
-		if (car.DoesKill(userFrog)) {
-			userFrog.MoveByVector({ 200, 0 });
+		for (int i = 0; i < car1Count; i++) {
+			car1[i]->Move(delta);
+			if (car1[i]->DoesKill(userFrog)) {
+				userFrog.MoveByVector({ 200,0 });
+			}
 		}
 		//czarne pasy po bokach ekranu
 		DrawRectangle(screen, 0, 0, MAP_LEFT_BORDER, SCREEN_HEIGHT, czarny, czarny);

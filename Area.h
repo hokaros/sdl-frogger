@@ -31,6 +31,7 @@ protected:
 	SDL_Surface* bmp;
 	SDL_Surface* screen;
 public:
+	Area();
 	Area(int x, int y, SDL_Surface* bmp, SDL_Surface* screen);
 	void Draw();
 	VectorInt GetCenter();

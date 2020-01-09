@@ -2,6 +2,15 @@
 #include "Draw.h"
 #include <iostream>
 
+Area::Area() {
+	x = 0;
+	y = 0;
+	width = 0;
+	height = 0;
+	bmp = NULL;
+	screen = NULL;
+}
+
 Area::Area(int x, int y, SDL_Surface* bmp, SDL_Surface* screen) {
 	this->x = x;
 	this->y = y;
