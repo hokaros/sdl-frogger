@@ -14,9 +14,13 @@ public:
 	double fpsTimer;
 	double fps;
 
+	int pauseT;
+
 	Timer();
 	//zwraca czas w sekundach up³yniêty od ostatniego wywo³ania funkcji
 	double GetDeltaTime();
 	double GetFps(double deltaTime);
+	void Pause();
+	void Unpause();
 };
 

@@ -1,9 +1,2 @@
-﻿  main.cpp
-C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(241,22): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
-C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(311,26): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
-C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(310,32): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
-C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(321,2): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
-C:\Users\kubas\Desktop\PPProjekt\P2\main.cpp(324,2): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
+﻿  Game.cpp
   szablon2vs19.vcxproj -> C:\Users\kubas\Desktop\PPProjekt\P2\Debug\szablon2vs19.exe

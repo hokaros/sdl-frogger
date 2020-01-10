@@ -15,8 +15,6 @@ extern "C" {
 #include"SDL2-2.0.10/include/SDL_main.h"
 }
 
-#define SCREEN_WIDTH	640
-#define SCREEN_HEIGHT	480
 
 #define TURTLE1_COUNT 3
 #define TURTLE2_COUNT 2
@@ -26,7 +24,6 @@ extern "C" {
 extern "C"
 #endif
 int main(int argc, char **argv) {
-	Game game;
 	int quit, rc;
 	double distance, etiSpeed, delta;
 	SDL_Event event;
@@ -181,6 +178,7 @@ int main(int argc, char **argv) {
 		SDL_Quit();
 		return 1;
 	}
+	Game game(screen, renderer, scrtex, charset);
 
 	const int ROW_HEIGHT = froggerSf->h;
 
@@ -334,20 +332,29 @@ int main(int argc, char **argv) {
 		while(SDL_PollEvent(&event)) {
 			switch(event.type) {
 			case SDL_KEYDOWN:
-				if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-				else if (event.key.keysym.sym == SDLK_UP) {
+				if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+				else if (event.key.keysym.sym == SDLK_UP
+					|| event.key.keysym.sym == SDLK_w) {
 					etiSpeed = 2.0;
 					userFrog.Move(Direction::Up);
 				}
-				else if(event.key.keysym.sym == SDLK_DOWN) {
+				else if (event.key.keysym.sym == SDLK_DOWN
+					|| event.key.keysym.sym == SDLK_s) {
 					etiSpeed = 0.3;
 					userFrog.Move(Direction::Down);
 				}
-				else if (event.key.keysym.sym == SDLK_RIGHT) {
+				else if (event.key.keysym.sym == SDLK_RIGHT
+					|| event.key.keysym.sym == SDLK_d) {
 					userFrog.Move(Direction::Right);
 				}
-				else if (event.key.keysym.sym == SDLK_LEFT) {
+				else if (event.key.keysym.sym == SDLK_LEFT
+					|| event.key.keysym.sym == SDLK_a) {
 					userFrog.Move(Direction::Left);
+				}
+				else if (event.key.keysym.sym == SDLK_p) {
+					timer.Pause();
+					game.Pause();
+					timer.Unpause();
 				}
 				break;
 			case SDL_KEYUP:
