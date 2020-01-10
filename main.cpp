@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "Timer.h"
 #include "Killing.h"
+#include "TurtleGroup.h"
 
 extern "C" {
 #include"SDL2-2.0.10/include/SDL.h"
@@ -17,6 +18,8 @@ extern "C" {
 #define SCREEN_WIDTH	640
 #define SCREEN_HEIGHT	480
 
+#define TURTLE1_COUNT 3
+#define TURTLE2_COUNT 2
 
 // main
 #ifdef __cplusplus
@@ -30,7 +33,7 @@ int main(int argc, char **argv) {
 	SDL_Surface *screen, *charset;
 	SDL_Surface *eti;
 	SDL_Surface* background;
-	SDL_Surface* froggerSf, *longLogSf, *car1Sf;
+	SDL_Surface* froggerSf, *longLogSf, *car1Sf, *turtleSf;
 	SDL_Texture *scrtex;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -162,6 +165,22 @@ int main(int argc, char **argv) {
 		SDL_Quit();
 		return 1;
 	}
+	turtleSf = SDL_LoadBMP("graphics/turtle.bmp");
+	if (turtleSf == NULL) {
+		printf("SDL_LoadBMP(graphics/turtle.bmp) error: %s\n", SDL_GetError());
+		SDL_FreeSurface(car1Sf);
+		SDL_FreeSurface(longLogSf);
+		SDL_FreeSurface(froggerSf);
+		SDL_FreeSurface(background);
+		SDL_FreeSurface(charset);
+		SDL_FreeSurface(screen);
+		SDL_FreeSurface(eti);
+		SDL_DestroyTexture(scrtex);
+		SDL_DestroyWindow(window);
+		SDL_DestroyRenderer(renderer);
+		SDL_Quit();
+		return 1;
+	}
 
 	const int ROW_HEIGHT = froggerSf->h;
 
@@ -179,6 +198,8 @@ int main(int argc, char **argv) {
 	//obiekty poruszaj¹ce siê w lewo maj¹ ujemn¹ wspó³rzêdn¹ x wektora prêdkoœci
 	Vector movableSpeed = {100, 0};
 	Vector car1Speed = { -150, 0 };
+	Vector turtle1Speed = { -130, 0 };
+	Vector turtle2Speed = { -160, 0 };
 
 	const int MAP_BOTTOM_BORDER = background->h;
 	const int MAP_LEFT_BORDER = (SCREEN_WIDTH - background->w) / 2;
@@ -189,10 +210,11 @@ int main(int argc, char **argv) {
 
 	Area rect(0, 0, eti, screen);
 	Area frogger(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - froggerSf->h, froggerSf, screen);
-	Area longLogA(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 8, longLogSf, screen);
+	Area longLogA(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 10, longLogSf, screen);
 
 	/*******************************PRZESZKODY*********************************/
-	int car1Count = 5;
+	//pojazdy
+	int car1Count = 5; //liczba pojazdów na 1. pasie ulicy
 	Area car1A(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 2, car1Sf, screen);
 	int car1Gap = 3 * car1A.width;
 
@@ -203,11 +225,34 @@ int main(int argc, char **argv) {
 		car1[i]->x += i*(car1[i]->width + car1Gap);
 	}
 
+	//¿ó³wie
+	Area turtle(MAP_LEFT_BORDER, MAP_BOTTOM_BORDER - ROW_HEIGHT * 8, turtleSf, screen);
+	int turtleGroup1Count = 3; //liczba grup ¿ó³wi na 1. pasie rzeki
+	int turtleGroup1Gap = turtle.width * 3;
+
+	TurtleGroup** turtleGroup1 = new TurtleGroup * [turtleGroup1Count];
+	for (int i = 0; i < turtleGroup1Count; i++) {
+		turtleGroup1[i] = new TurtleGroup(TURTLE1_COUNT, turtle, turtle1Speed, MAP_LEFT_BORDER - background->w, MAP_RIGHT_BORDER);
+		turtleGroup1[i]->MoveByVector({ i*(turtleGroup1Gap + turtleGroup1[i]->GetWidth()), 0 });
+	}
+	//3. pas rzeki
+	turtle.y -= ROW_HEIGHT * 3;
+	int turtleGroup2Count = 5;
+	int turtleGroup2Gap = turtle.width * 1.5;
+
+	TurtleGroup** turtleGroup2 = new TurtleGroup * [turtleGroup2Count];
+	for (int i = 0; i < turtleGroup2Count; i++) {
+		turtleGroup2[i] = new TurtleGroup(TURTLE2_COUNT, turtle, turtle2Speed, MAP_LEFT_BORDER - background->w, MAP_RIGHT_BORDER);
+		turtleGroup2[i]->MoveByVector({ i * (turtleGroup2Gap + turtleGroup2[i]->GetWidth()), 0 });
+	}
+
 
 	MovingHor movable(rect, movableSpeed, MAP_LEFT_BORDER, MAP_RIGHT_BORDER+background->w);
 	Attachable longLog(longLogA, movableSpeed, MAP_LEFT_BORDER, MAP_RIGHT_BORDER + background->w);
 
 	MovingFree userFrog(frogger, MAP_TOP_BORDER, MAP_RIGHT_BORDER, MAP_BOTTOM_BORDER, MAP_LEFT_BORDER);
+
+	bool attached; //wskazuje, czy gracz porusza siê na jakiejœ przeszkodzie
 
 	while(!quit) {
 
@@ -219,22 +264,41 @@ int main(int argc, char **argv) {
 		//generowanie t³a
 		SDL_FillRect(screen, NULL, czarny);
 		DrawSurface(screen, background, SCREEN_WIDTH / 2, background->h / 2);
+
 		//ruchy obiektów
+		attached = false;
 		movable.Move(delta);
 		if (longLog.IsAttached(userFrog)) {
+			attached = true;
 			userFrog.MoveByVector(longLog.Move(delta));
 		}
-		else {
+		else
 			longLog.Move(delta);
-			if (userFrog.IsInside(water)) {
-
-			}
-		}
 		for (int i = 0; i < car1Count; i++) {
 			car1[i]->Move(delta);
 			if (car1[i]->DoesKill(userFrog)) {
 				userFrog.MoveByVector({ 200,0 });
 			}
+		}
+		for (int i = 0; i < turtleGroup1Count; i++) {
+			if (!attached && turtleGroup1[i]->IsAttached(userFrog)) {
+				attached = true;
+				userFrog.MoveByVector(turtleGroup1[i]->Move(delta));
+			}
+			else
+				turtleGroup1[i]->Move(delta);
+		}
+		for (int i = 0; i < turtleGroup2Count; i++) {
+			if (!attached && turtleGroup2[i]->IsAttached(userFrog)) {
+				attached = true;
+				userFrog.MoveByVector(turtleGroup2[i]->Move(delta));
+			}
+			else
+				turtleGroup2[i]->Move(delta);
+		}
+
+		if (!attached && userFrog.IsInside(water)) {
+			game.LoseLife();
 		}
 		//czarne pasy po bokach ekranu
 		DrawRectangle(screen, 0, 0, MAP_LEFT_BORDER, SCREEN_HEIGHT, czarny, czarny);
@@ -300,7 +364,19 @@ int main(int argc, char **argv) {
 		timer.frames++;
 	};
 
+	//zwolnienie przeszkód
+	for (int i = 0; i < car1Count; i++) {
+		delete(car1[i]);
+	}
+	for (int i = 0; i < turtleGroup1Count; i++) {
+		delete(turtleGroup1[i]);
+	}
+	for (int i = 0; i < turtleGroup1Count; i++) {
+		delete(turtleGroup2[i]);
+	}
 	// zwolnienie powierzchni / freeing all surfaces
+	SDL_FreeSurface(longLogSf);
+	SDL_FreeSurface(turtleSf);
 	SDL_FreeSurface(background);
 	SDL_FreeSurface(charset);
 	SDL_FreeSurface(screen);

@@ -1,7 +1,7 @@
 #pragma once
 #include "Moving.h"
 #define JUMP_DISTANCE 32
-#define JUMP_SPEED 20
+#define JUMP_SPEED 30
 /*
 Klasa, której obiekty
 poruszaj¹ siê we wszystkie strony
