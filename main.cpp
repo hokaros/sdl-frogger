@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 	SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-	SDL_SetWindowTitle(window, "Szablon do zdania drugiego 2017");
+	SDL_SetWindowTitle(window, "Frogger");
 
 
 	screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32,

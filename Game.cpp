@@ -258,22 +258,7 @@ Option Game::Start() {
 		attached = false;
 		killed = false;
 		currentLevel->MoveCars(killed, delta);
-		for (int i = 0; i < currentLevel->turtleGroups1Count; i++) {
-			if (!attached && currentLevel->turtleGroups1[i]->IsAttached(*currentLevel->player)) {
-				attached = true;
-				currentLevel->player->MoveByVector(currentLevel->turtleGroups1[i]->Move(delta));
-			}
-			else
-				currentLevel->turtleGroups1[i]->Move(delta);
-		}
-		for (int i = 0; i < currentLevel->turtleGroups2Count; i++) {
-			if (!attached && currentLevel->turtleGroups2[i]->IsAttached(*currentLevel->player)) {
-				attached = true;
-				currentLevel->player->MoveByVector(currentLevel->turtleGroups2[i]->Move(delta));
-			}
-			else
-				currentLevel->turtleGroups2[i]->Move(delta);
-		}
+		currentLevel->MoveTurtles(attached, delta);
 		currentLevel->MoveLogs(attached, delta);
 		//sprawdzanie, czy gracz siê utopi³
 		if (!attached && currentLevel->player->IsInside(water))

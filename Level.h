@@ -51,5 +51,6 @@ public:
 	//poruszanie przeszkodami
 	void MoveLogs(bool& attached, double deltaTime);
 	void MoveCars(bool& killed, double deltaTime);
+	void MoveTurtles(bool& attached, double deltaTime);
 };
 

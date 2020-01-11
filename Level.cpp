@@ -286,3 +286,23 @@ void Level::MoveCars(bool& killed, double deltaTime) {
 		}
 	}
 }
+
+void Level::MoveTurtles(bool& attached, double deltaTime) {
+	unsigned short i;
+	for (i = 0; i < turtleGroups1Count; i++) {
+		if (!attached && turtleGroups1[i]->IsAttached(*player)) {
+			attached = true;
+			player->MoveByVector(turtleGroups1[i]->Move(deltaTime));
+		}
+		else
+			turtleGroups1[i]->Move(deltaTime);
+	}
+	for (i = 0; i < turtleGroups2Count; i++) {
+		if (!attached && turtleGroups2[i]->IsAttached(*player)) {
+			attached = true;
+			player->MoveByVector(turtleGroups2[i]->Move(deltaTime));
+		}
+		else
+			turtleGroups2[i]->Move(deltaTime);
+	}
+}
