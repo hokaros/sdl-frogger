@@ -48,41 +48,68 @@ void Game::Lose() {
 	//TO DO: wypisywanie komunikatu o pora¿ce na ekranie
 }
 
-void Game::Quit() {
+void Game::QuitForm() {
 	
 }
 
-void Game::Menu() {
-	int quit = 0;
+Option Game::Menu() {
+	Option chosen = Option::Play;
 	char* text;
-	int primaryColour = SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF);
-	int secondaryColour = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
-	int w = 200;
-	int h = 400;
-	DrawRectangle(screen, (SCREEN_WIDTH - w) / 2, (SCREEN_HEIGHT - h) / 2, w, h, primaryColour, secondaryColour);
-	int optionW = 100;
+	int primaryColour = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
+	int secondaryColour = SDL_MapRGB(screen->format, 0x22, 0xFF, 0x22);
+	int czarny = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
+	int backgroundW = 500;
+	int backgroundH = 400;
+	int optionW = 150;
 	int optionH = 50;
-	Render();
-	while (!quit) {
+	SDL_FillRect(screen, NULL, czarny);
+	while (true) {
+
+		//t³o
+		DrawRectangle(screen, (SCREEN_WIDTH - backgroundW) / 2, (SCREEN_HEIGHT - backgroundH) / 2, backgroundW, backgroundH, primaryColour, secondaryColour);
+		//przyciski
+		if (chosen == Option::Play) {
+			DrawRectangle(screen, (SCREEN_WIDTH - optionW) / 2, (SCREEN_HEIGHT - optionH*2) / 2, optionW, optionH, secondaryColour, primaryColour);
+			DrawRectangle(screen, (SCREEN_WIDTH - optionW) / 2, (SCREEN_HEIGHT) / 2, optionW, optionH, primaryColour, secondaryColour);
+		}
+		else {
+			DrawRectangle(screen, (SCREEN_WIDTH - optionW) / 2, (SCREEN_HEIGHT - optionH * 2) / 2, optionW, optionH, primaryColour, secondaryColour);
+			DrawRectangle(screen, (SCREEN_WIDTH - optionW) / 2, (SCREEN_HEIGHT) / 2, optionW, optionH, secondaryColour, primaryColour);
+		}
+		text = "Graj";
+		DrawString(screen, (SCREEN_WIDTH - strlen(text) * 8) / 2, (SCREEN_HEIGHT - optionH - 8) / 2, "Graj", charset);
+		text = "Wyjdz";
+		DrawString(screen, (SCREEN_WIDTH - strlen(text) * 8) / 2, (SCREEN_HEIGHT + optionH - 8) / 2, "Wyjdz", charset);
+		Render();
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
-			case SDL_QUIT:
-				quit = 1;
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE) return Option::Exit;
+				else if (event.key.keysym.sym == SDLK_UP
+					|| event.key.keysym.sym == SDLK_w)
+					chosen = Option::Play;
+				else if (event.key.keysym.sym == SDLK_DOWN
+					|| event.key.keysym.sym == SDLK_s)
+					chosen = Option::Exit;
+				else if (event.key.keysym.sym == SDLK_RETURN)
+					return chosen;
 				break;
+			case SDL_QUIT:
+				return Option::Exit;
 			}
 		}
 	}
-	if (quit)
-		Quit();
 }
 
 void Game::LoadLevel() {
+	delete currentLevel;
+	delete timer;
 	currentLevel = new Level(screen);
+	timer = new Timer();
 }
 
 void Game::LoseLife() {
 	lives--;
-	printf("LOL");
 	if (currentLevel->player->y < currentLevel->mapBottomBorder-ROW_HEIGHT)
 		currentLevel->player->MoveByVector({ 0, ROW_HEIGHT });
 	if (lives == 0) {
@@ -208,6 +235,11 @@ void Game::Start() {
 				else if (event.key.keysym.sym == SDLK_p) {
 					timer->Pause();
 					Pause();
+					timer->Unpause();
+				}
+				else if (event.key.keysym.sym == SDLK_q) {
+					timer->Pause();
+					QuitForm();
 					timer->Unpause();
 				}
 				break;

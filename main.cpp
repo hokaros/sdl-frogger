@@ -89,7 +89,14 @@ int main(int argc, char **argv) {
 		};
 	SDL_SetColorKey(charset, true, 0x000000);
 	Game *game = new Game(screen, renderer, scrtex, charset);
-	game->Start();
+	Option opt;
+	do {
+		opt = game->Menu();
+		if (opt == Option::Play) {
+			game->LoadLevel();
+			game->Start();
+		}
+	} while (opt == Option::Play);
 
 	delete game;
 	SDL_DestroyWindow(window);
