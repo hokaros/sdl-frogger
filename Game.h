@@ -20,6 +20,7 @@ protected:
 	Timer* timer;
 
 	int lives;
+	bool lost;
 	int points;
 	int level;
 	Level *currentLevel;
@@ -30,16 +31,15 @@ protected:
 	void Render();
 	void LevelUp();
 	void Win();
-	void Lose();
-	void QuitForm();
+	Option Lose();
+	Option QuitForm();
 public:
 	Game(SDL_Surface* screen, SDL_Renderer* renderer, SDL_Texture* scrtex, SDL_Surface* charset);
 	~Game();
 	Option Menu();
 	void LoseLife();
-	void ProcessState();
 	void Pause();
 	void LoadLevel();
-	void Start();
+	Option Start();
 
 };

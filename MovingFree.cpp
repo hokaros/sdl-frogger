@@ -93,3 +93,12 @@ void MovingFree::ProcessState(double deltaTime) {
 		}
 	}
 }
+
+void MovingFree::SetPosition(VectorInt position) {
+	velocity = ZERO_VECTOR;
+	moving = false;
+	nextMove = Direction::None;
+	x = position.x;
+	y = position.y;
+	targetPos = position;
+}

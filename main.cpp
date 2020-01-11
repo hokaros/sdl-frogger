@@ -90,11 +90,16 @@ int main(int argc, char **argv) {
 	SDL_SetColorKey(charset, true, 0x000000);
 	Game *game = new Game(screen, renderer, scrtex, charset);
 	Option opt;
+	//reOpt s³u¿y do kontynuowania gry bez koniecznoœci wracania do menu
+	Option reOpt;
 	do {
 		opt = game->Menu();
 		if (opt == Option::Play) {
-			game->LoadLevel();
-			game->Start();
+			reOpt = Option::Play;
+			while (reOpt == Option::Play) {
+				game->LoadLevel();
+				reOpt = game->Start();
+			}
 		}
 	} while (opt == Option::Play);
 

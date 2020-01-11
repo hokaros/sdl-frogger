@@ -31,6 +31,7 @@ public:
 	MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary);
 	void Move(Direction direction);
 	void MoveByVector(VectorInt vector);
+	void SetPosition(VectorInt position);
 	void ProcessState(double deltaTime);
 };
 
