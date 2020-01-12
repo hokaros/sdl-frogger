@@ -39,18 +39,13 @@ void Game::LoadLevel() {
 	lives = MAX_LIVES;
 }
 
-void Game::LevelUp() {
+int Game::LevelUp() {
 	level++;
-	if (level > LAST_LEVEL) {
-		Win();
-	}
-	else {
-		LoadLevel();
-	}
+	return level;
 }
 
 void Game::Win() {
-
+	printf("Congratulations!");
 }
 
 Option Game::Lose() {
@@ -254,6 +249,7 @@ Option Game::Start() {
 		//generowanie t³a
 		SDL_FillRect(screen, NULL, black);
 		DrawSurface(screen, currentLevel->background, SCREEN_WIDTH / 2, currentLevel->background->h / 2);
+		currentLevel->DrawWinAreas();
 		//ruchy obiektów
 		attached = false;
 		killed = false;
@@ -276,21 +272,25 @@ Option Game::Start() {
 			currentLevel->mapBottomBorder - currentLevel->mapTopBorder })) {
 			killed = true;
 		}
+		if (currentLevel->player->IsInside(currentLevel->winRow)) {
+			if (WinArea::DoesTake(*(currentLevel->player), currentLevel->winAreas)) {
+				currentLevel->player->SetPosition({ currentLevel->mapLeftBorder, currentLevel->mapBottomBorder - currentLevel->player->height });
+			}
+			else
+				killed = true;
+		}
+
+		//œmieræ
 		if (killed) {
 			LoseLife();
 			if (lost) {
 				return Lose();
 			}
 		}
+		//zwyciêstwo - wyjœcie z poziomu gry, aby j¹ prze³adowaæ
+		if (WinArea::IsWon())
+			return Option::Play;
 
-		// tekst informacyjny / info text
-		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 36, red, blue);
-		//            "template for the second project, elapsed time = %.1lf s  %.0lf frames / s"
-		sprintf(text, "Szablon drugiego zadania, czas trwania = %.1lf s  %.0lf klatek / s", timer->worldTime, timer->GetFps(delta));
-		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
-		//	      "Esc - exit, \030 - faster, \031 - slower"
-		sprintf(text, "Esc - wyjscie, \030 - przyspieszenie, \031 - zwolnienie");
-		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 26, text, charset);
 		Render();
 
 		// obs³uga zdarzeñ (o ile jakieœ zasz³y) / handling of events (if there were any)

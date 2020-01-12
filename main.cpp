@@ -93,12 +93,19 @@ int main(int argc, char **argv) {
 	//reOpt s³u¿y do kontynuowania gry bez koniecznoœci wracania do menu
 	Option reOpt;
 	do {
+		//pobieranie danych z menu
 		opt = game->Menu();
 		if (opt == Option::Play) {
 			reOpt = Option::Play;
 			while (reOpt == Option::Play) {
 				game->LoadLevel();
 				reOpt = game->Start();
+				if (WinArea::IsWon()) {
+					if (game->LevelUp() >= LAST_LEVEL) {
+						game->Win();
+						reOpt = Option::Exit;
+					}
+				}
 			}
 		}
 	} while (opt == Option::Play);

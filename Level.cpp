@@ -3,7 +3,7 @@
 
 Level::Level(SDL_Surface* screen) {
 	this->screen = screen;
-	//wczytanie t³a
+	//wczytanie t³a mapy
 	background = SDL_LoadBMP("graphics/background1.bmp");
 	if (background == NULL) {
 		printf("SDL_LoadBMP(graphics/background1.bmp) error: %s\n", SDL_GetError());
@@ -13,26 +13,37 @@ Level::Level(SDL_Surface* screen) {
 	mapLeftBorder = (SCREEN_WIDTH - background->w) / 2;
 	mapTopBorder = mapBottomBorder - ROW_HEIGHT * 13;
 	mapRightBorder = mapLeftBorder + background->w;
+	//pola wygranej
+	WinArea::count = 0, WinArea::takenCount = 0;
+	int winRowY = mapBottomBorder - ROW_HEIGHT * 12 - WIN_SIZE;
+	winRow = { mapLeftBorder, winRowY, mapRightBorder - mapLeftBorder, WIN_SIZE };
+	winAreas = new WinArea * [WIN_AREAS];
+	for (int i = 0; i < WIN_AREAS; i++)
+		winAreas[i] = new WinArea({ mapLeftBorder + WIN_MARGIN + i * (WIN_SIZE + WIN_GAP), winRowY, WIN_SIZE, WIN_SIZE },
+			screen);
 
 	LoadPlayer();
 	/*********************£ADOWANIE PRZESZKÓD**********************/
 	//pojazdy
-	LoadCars(1, 5, { -130, 0 }, 120);
-	LoadCars(2, 4, { 150, 0 }, 90);
-	LoadCars(3, 4, { -110, 0 }, 80);
-	LoadCars(4, 2, { 170, 0 }, 100);
-	LoadCars(5, 5, { -140, 0 }, 80);
+	LoadCars(1, 5, { -100, 0 }, 120);
+	LoadCars(2, 4, { 130, 0 }, 90);
+	LoadCars(3, 5, { -110, 0 }, 100);
+	LoadCars(4, 2, { 200, 0 }, 120);
+	LoadCars(5, 5, { -120, 0 }, 180);
 	//¿ó³wie
 	LoadTurtleGroups(1, 3, { -130, 0 }, 100);
 	LoadTurtleGroups(4, 5, { -160, 0 }, 80);
 	//k³ody
 	LoadLogs(2, 3, { 120,0 }, 100);
 	LoadLogs(3, 1, { -170,0 }, 200);
-	LoadLogs(5, 4, { 150,0 }, 80);
+	LoadLogs(5, 4, { 90,0 }, 80);
 }
 
 Level::~Level() {
 	unsigned short i;
+	for (i = 0; i < WIN_AREAS; i++) {
+		delete winAreas[i];
+	}
 	//zwalnianie obiektów
 	for (i = 0; i < cars1Count; i++) {
 		delete cars1[i];
@@ -304,5 +315,11 @@ void Level::MoveTurtles(bool& attached, double deltaTime) {
 		}
 		else
 			turtleGroups2[i]->Move(deltaTime);
+	}
+}
+
+void Level::DrawWinAreas() {
+	for (int i = 0; i < WIN_AREAS; i++) {
+		winAreas[i]->Draw();
 	}
 }

@@ -29,8 +29,6 @@ protected:
 	SDL_Event event;
 
 	void Render();
-	void LevelUp();
-	void Win();
 	Option Lose();
 	Option QuitForm();
 public:
@@ -39,7 +37,9 @@ public:
 	Option Menu();
 	void LoseLife();
 	void Pause();
+	int LevelUp();
 	void LoadLevel();
 	Option Start();
+	void Win();
 
 };

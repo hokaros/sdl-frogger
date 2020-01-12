@@ -31,6 +31,7 @@
     <ClCompile Include="Draw.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TurtleGroup.cpp" />
+    <ClCompile Include="WinArea.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="cs8x8.bmp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="MovingHor.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TurtleGroup.h" />
+    <ClInclude Include="WinArea.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

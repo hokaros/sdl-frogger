@@ -1,2 +1,6 @@
-﻿  main.cpp
+﻿  Level.cpp
+C:\Users\kubas\Desktop\PPProjekt\P2\Level.cpp(97,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
+C:\Users\kubas\Desktop\PPProjekt\P2\Level.cpp(216,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
   szablon2vs19.vcxproj -> C:\Users\kubas\Desktop\PPProjekt\P2\Debug\szablon2vs19.exe
