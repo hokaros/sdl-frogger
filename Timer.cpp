@@ -37,3 +37,14 @@ void Timer::Unpause() {
 	int unpauseT = SDL_GetTicks();
 	t1 += unpauseT-pauseT;
 }
+
+void Timer::Freeze(int time) {
+	//tc - czas obecny, delta - czas up³yniêty
+	int tc, delta;
+	//czas pocz¹tkowy
+	int t0 = SDL_GetTicks();
+	do {
+		tc = SDL_GetTicks();
+		delta = tc - t0;
+	} while (delta <= time);
+}

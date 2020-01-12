@@ -53,6 +53,8 @@ public:
 	Level(SDL_Surface* screen);
 	~Level();
 	void LoadPlayer();
+	//zwraca 0, jeœli nie, oraz ró¿nicê, jeœli tak
+	int RowAdvancement(short row);
 	//wczytuje tablicê samochodów na row rzêdzie ulicy w liczbie count, prêdkoœci velocity i odstêpie gap
 	void LoadCars(unsigned short row, unsigned short count, Vector velocity, int gap);
 	void LoadTurtleGroups(unsigned short riverRow, unsigned short count, Vector velocity, int gap);

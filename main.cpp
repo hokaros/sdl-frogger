@@ -2,13 +2,7 @@
 #include<math.h>
 #include<stdio.h>
 #include<string.h>
-#include "Draw.h"
-#include "MovingFree.h"
-#include "Attachable.h"
 #include "Game.h"
-#include "Timer.h"
-#include "Killing.h"
-#include "TurtleGroup.h"
 
 extern "C" {
 #include"SDL2-2.0.10/include/SDL.h"
@@ -104,7 +98,11 @@ int main(int argc, char **argv) {
 					if (game->LevelUp() >= LAST_LEVEL) {
 						game->Win();
 						reOpt = Option::Exit;
+						game->points = 0;
 					}
+				}
+				else {
+					game->points = 0;
 				}
 			}
 		}

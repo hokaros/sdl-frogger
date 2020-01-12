@@ -22,5 +22,7 @@ public:
 	double GetFps(double deltaTime);
 	void Pause();
 	void Unpause();
+	//zatrzymuje grê na time milisekund
+	void Freeze(int time);
 };
 

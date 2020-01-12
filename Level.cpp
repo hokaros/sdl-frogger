@@ -25,17 +25,17 @@ Level::Level(SDL_Surface* screen) {
 	LoadPlayer();
 	/*********************£ADOWANIE PRZESZKÓD**********************/
 	//pojazdy
-	LoadCars(1, 5, { -100, 0 }, 120);
-	LoadCars(2, 4, { 130, 0 }, 90);
-	LoadCars(3, 5, { -110, 0 }, 100);
+	LoadCars(1, 3, { -100, 0 }, 120);
+	LoadCars(2, 2, { 130, 0 }, 90);
+	LoadCars(3, 3, { -110, 0 }, 100);
 	LoadCars(4, 2, { 200, 0 }, 120);
-	LoadCars(5, 5, { -120, 0 }, 180);
+	LoadCars(5, 2, { -100, 0 }, 180);
 	//¿ó³wie
 	LoadTurtleGroups(1, 3, { -130, 0 }, 100);
 	LoadTurtleGroups(4, 5, { -160, 0 }, 80);
 	//k³ody
-	LoadLogs(2, 3, { 120,0 }, 100);
-	LoadLogs(3, 1, { -170,0 }, 200);
+	LoadLogs(2, 3, { 80,0 }, 100);
+	LoadLogs(3, 1, { 170,0 }, 200);
 	LoadLogs(5, 4, { 90,0 }, 80);
 }
 
@@ -90,6 +90,15 @@ void Level::LoadPlayer() {
 	}
 	Area frogger(mapLeftBorder, mapBottomBorder - froggerSf->h, froggerSf, screen);
 	player = new MovingFree(frogger, mapTopBorder, mapRightBorder, mapBottomBorder, mapLeftBorder);
+}
+
+int Level::RowAdvancement(short row) {
+	//odleg³oœæ od do³u mapy
+	int distance = -(player->y-mapBottomBorder);
+	int currentRow = distance / ROW_HEIGHT;
+	if (currentRow <= row)
+		return 0;
+	return currentRow-row;
 }
 
 void Level::LoadCars(unsigned short streetRow, unsigned short count, Vector velocity, int gap) {
@@ -195,7 +204,7 @@ void Level::LoadLogs(unsigned short riverRow, unsigned short count, Vector veloc
 	case 2:
 		logs = &logs1;
 		logs1Count = count;
-		logType = "Medium";
+		logType = "Short";
 		break;
 	case 3:
 		logs = &logs2;
@@ -205,7 +214,7 @@ void Level::LoadLogs(unsigned short riverRow, unsigned short count, Vector veloc
 	case 5:
 		logs = &logs3;
 		logs3Count = count;
-		logType = "Short";
+		logType = "Medium";
 		break;
 	default:
 		logs = &logs1;

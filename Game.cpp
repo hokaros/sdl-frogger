@@ -12,6 +12,7 @@ Game::Game(SDL_Surface* screen, SDL_Renderer* renderer, SDL_Texture* scrtex, SDL
 	currentLevel = new Level(screen);
 	timer = new Timer();
 	paused = false;
+	highestRow = 1;
 }
 
 Game::~Game() {
@@ -44,6 +45,18 @@ int Game::LevelUp() {
 	return level;
 }
 
+void Game::LoseLife() {
+	lives--;
+	//miejsce na animacjê
+	//przesuniêcie na pozycjê pocz¹tkow¹
+	currentLevel->player->SetPosition({ currentLevel->mapLeftBorder, currentLevel->mapBottomBorder - currentLevel->player->height });
+	highestRow = 1;
+	timer->worldTime = 0;
+	if (lives <= 0) {
+		lost = true;
+	}
+}
+
 void Game::Win() {
 	printf("Congratulations!");
 }
@@ -63,6 +76,7 @@ Option Game::Lose() {
 	DrawString(screen, (SCREEN_WIDTH - strlen(text) * 8) / 2, SCREEN_HEIGHT/2 + 16, text, charset);
 	Render();
 
+	points = 0;
 	while (true) {
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -77,6 +91,39 @@ Option Game::Lose() {
 			}
 		}
 	}
+}
+
+void Game::DrawInfo() {
+	char text[128];
+	int primaryColour = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
+	int secondaryColour = SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF);
+	int x = currentLevel->mapLeftBorder;
+	int y = currentLevel->mapBottomBorder;
+	int width = currentLevel->mapRightBorder - currentLevel->mapLeftBorder;
+	int height = SCREEN_HEIGHT - currentLevel->mapBottomBorder;
+	int textMargin = 8;
+
+	sprintf(text, "Score: %d", points);
+	DrawString(screen, x + textMargin, y + textMargin, text, charset);
+	sprintf(text, "Lives left: %d", lives);
+	DrawString(screen, x + textMargin, y + 2 * textMargin + 8, text, charset);
+	int timeLeft = ceil(MAX_TIME - timer->worldTime);
+	sprintf(text, "Time: %d", timeLeft);
+	DrawString(screen, x + width - textMargin - strlen(text) * 8, y + 2 * textMargin + 8, text, charset);
+	DrawTime(x + width - TIME_MAX_WIDTH - textMargin, y + 3 * textMargin + 8, TIME_MAX_WIDTH, 8);
+}
+
+void Game::DrawTime(int minX, int y, int maxWidth, int height) {
+	int green = SDL_MapRGB(screen->format, 0x00, 0xEE, 0x00);
+	int red = SDL_MapRGB(screen->format, 0xEE, 0x00, 0x00);
+	int width = (MAX_TIME-timer->worldTime) * maxWidth / MAX_TIME;
+	int colour;
+	if (timer->worldTime > DANGER_TIME)
+		colour = red;
+	else
+		colour = green;
+	int x = minX + maxWidth - width;
+	DrawRectangle(screen, x, y, width, height, colour, colour);
 }
 
 Option Game::QuitForm() {
@@ -133,6 +180,10 @@ Option Game::QuitForm() {
 			switch (event.type) {
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE)
+					return Option::Play;
+				else if (event.key.keysym.sym == SDLK_y)
+					return Option::Exit;
+				else if (event.key.keysym.sym == SDLK_n)
 					return Option::Play;
 				else if (event.key.keysym.sym == SDLK_UP
 					|| event.key.keysym.sym == SDLK_w
@@ -204,16 +255,6 @@ Option Game::Menu() {
 	}
 }
 
-void Game::LoseLife() {
-	lives--;
-	//miejsce na animacjê
-	//przesuniêcie na pozycjê pocz¹tkow¹
-	currentLevel->player->SetPosition({ currentLevel->mapLeftBorder, currentLevel->mapBottomBorder - currentLevel->player->height });
-	if (lives <= 0) {
-		lost = true;
-	}
-}
-
 void Game::Pause() {
 	paused = true;
 	char* text = "PAUSED";
@@ -231,6 +272,41 @@ void Game::Pause() {
 				paused = false;
 		}
 	}
+}
+
+bool Game::TimeOver() {
+	if (timer->worldTime > MAX_TIME)
+		return true;
+	else
+		return false;
+}
+
+void Game::DistanceBonus() {
+	int delta = currentLevel->RowAdvancement(highestRow);
+	if (delta > 0) {
+		highestRow += delta;
+		points += delta * 10;
+	}
+}
+
+void Game::Touchdown() {
+	char text[32];
+	int bonus = 0;
+	int receivedP = 50 + 10 * ceil(MAX_TIME - timer->worldTime) + bonus;
+	timer->Pause();
+	sprintf(text, "+%d", receivedP);
+	DrawString(screen, currentLevel->mapLeftBorder + 8, currentLevel->mapBottomBorder - 8, text, charset);
+	if (bonus > 0) {
+		sprintf(text, "%d", bonus);
+		DrawString(screen, currentLevel->player->GetCenter().x - strlen(text) * 4, currentLevel->player->y - 8, text, charset);
+	}
+	Render();
+	timer->Freeze(1000);
+	timer->Unpause();
+	points += receivedP;
+	highestRow = 1;
+	currentLevel->player->SetPosition({ currentLevel->mapLeftBorder, currentLevel->mapBottomBorder - currentLevel->player->height });
+	timer->worldTime = 0;
 }
 
 Option Game::Start() {
@@ -265,6 +341,7 @@ Option Game::Start() {
 
 		//poruszanie graczem
 		currentLevel->player->ProcessState(delta);
+		DistanceBonus();
 		//sprawdzanie, czy gracz wyszed³ poza mapê
 		if (!currentLevel->player->IsInside({ currentLevel->mapLeftBorder,
 			currentLevel->mapTopBorder,
@@ -272,14 +349,19 @@ Option Game::Start() {
 			currentLevel->mapBottomBorder - currentLevel->mapTopBorder })) {
 			killed = true;
 		}
+
+		//pasek informacyjny
+		DrawInfo();
+		//sprawdzanie, czy gracz doszed³ do koñca mapy
 		if (currentLevel->player->IsInside(currentLevel->winRow)) {
 			if (WinArea::DoesTake(*(currentLevel->player), currentLevel->winAreas)) {
-				currentLevel->player->SetPosition({ currentLevel->mapLeftBorder, currentLevel->mapBottomBorder - currentLevel->player->height });
+				Touchdown();
 			}
 			else
 				killed = true;
 		}
-
+		if (TimeOver())
+			killed = true;
 		//œmieræ
 		if (killed) {
 			LoseLife();
@@ -290,7 +372,6 @@ Option Game::Start() {
 		//zwyciêstwo - wyjœcie z poziomu gry, aby j¹ prze³adowaæ
 		if (WinArea::IsWon())
 			return Option::Play;
-
 		Render();
 
 		// obs³uga zdarzeñ (o ile jakieœ zasz³y) / handling of events (if there were any)
