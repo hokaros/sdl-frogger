@@ -1,16 +1,4 @@
-﻿  Game.cpp
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(110,15): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(106,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(108,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(111,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(119,12): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(295,16): warning C4244: "inicjowanie": konwersja z "double" do "int", możliwa utrata danych
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(297,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(300,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdio.h(1774): message : zobacz deklarację „sprintf”
-C:\Users\kubas\Desktop\PPProjekt\P2\Game.cpp(314,7): warning C4101: "text": lokalna zmienna, do której nie istnieje odwołanie
+﻿  Highscore.cpp
+C:\Users\kubas\Desktop\PPProjekt\P2\Highscore.cpp(32,1): warning C4996: 'strdup': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\string.h(536): message : zobacz deklarację „strdup”
   szablon2vs19.vcxproj -> C:\Users\kubas\Desktop\PPProjekt\P2\Debug\szablon2vs19.exe

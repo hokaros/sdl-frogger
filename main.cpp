@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
 	Option reOpt;
 	do {
 		//pobieranie danych z menu
-		opt = game->Menu();
+		opt = game->menu->MainMenu();
 		if (opt == Option::Play) {
 			reOpt = Option::Play;
 			while (reOpt == Option::Play) {
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
 			}
 		}
 	} while (opt == Option::Play);
-
+	final:
 	delete game;
 	SDL_DestroyWindow(window);
 	SDL_Quit();
