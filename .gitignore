@@ -2,8 +2,6 @@
 .vs
 *.user
 
-#Build results
-Debug/
 
 #After-use data
 highscores.txt
@@ -24,7 +22,6 @@ highscores.txt
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
