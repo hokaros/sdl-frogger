@@ -1,8 +1,9 @@
 #IDE
 .vs
-*.vcxproj
 *.user
-*.sln
+
+#Build results
+Debug/
 
 #After-use data
 highscores.txt
