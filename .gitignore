@@ -2,6 +2,13 @@
 .vs
 *.user
 
+#Build results
+*.ilk
+*.pdb
+*.tlog
+*.idb
+x64/Debug/Frogger.log
+Debug/Frogger.log
 
 #After-use data
 highscores.txt
