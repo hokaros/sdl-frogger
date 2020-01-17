@@ -130,15 +130,15 @@ void Game::DrawTime(int minX, int y, int maxWidth, int height) {
 
 char* Game::GetName() {
 	int submit = 0;
-	int inputSize = 16;
+	int inputSize = NAME_LENGTH+1;
 	int typedSize = 0;
 	char typed;
 	char text[64];
-	char* input = new char[inputSize + 1]; //liczba znaków + \0
-	for (int i = 0; i < inputSize; i++) {
+	char* input = new char[inputSize]; //liczba znaków + \0
+	for (int i = 0; i < NAME_LENGTH; i++) {
 		input[i] = ' ';
 	}
-	input[inputSize] = '\0';
+	input[inputSize-1] = '\0';
 	int primaryColour = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
 	int secondaryColour = SDL_MapRGB(screen->format, 0x22, 0xFF, 0x22);
 
@@ -160,7 +160,7 @@ char* Game::GetName() {
 						typedSize--;
 					}
 				}
-				else if (typedSize < inputSize) {
+				else if (typedSize < NAME_LENGTH) {
 					typed = Keyboard::GetChar(event.key.keysym.sym);
 					if (typed != NULL)
 						input[typedSize++] = typed;

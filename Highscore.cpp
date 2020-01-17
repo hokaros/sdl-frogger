@@ -2,47 +2,37 @@
 
 using namespace std;
 
-Highscore::Highscore(const char* name, int score) {
-	this->name = name;
+Highscore::Highscore(char name[NAME_LENGTH], int score) {
+	strcpy(this->name, name);
 	this->score = score;
-	fstream file;
-	file.open("highscores.txt", ios::in);
-	if (!file.good()) {
-		ofstream fileNew{};
-		position = 1;
-	}
-	else {
-		position = 1;
-	}
+	position = 0;
 
-	file.close();
-	if (IsTop10()) {
-		file.open("highscores.txt", ios::out | ios::app);
-		string line;
-		int l = 1;
-		for (; l < position; l++) {
-			getline(file, line);
-		}
-		file << score<<' '<< name << endl;
-		file.close();
+	Highscore** highscores = LoadFromFile();
+	if (IsTop(highscores)) {
+		highscores[TOP_SIZE - 1] = this;
+		SaveAll(highscores);
 	}
 }
 
-Highscore::Highscore(const char* name, int score, int position) {
-	this->name = strdup(name);
+Highscore::Highscore(char name[NAME_LENGTH], int score, int position) {
+	strcpy(this->name, name);
 	this->score = score;
 	this->position = position;
 }
 
-bool Highscore::IsTop10() {
+bool Highscore::IsTop(Highscore** highscores) {
 	if (position > 0)
-		return (position <= 10);
+		return (position <= TOP_SIZE);
 	else {
+		Sort(highscores);
+		if (this->score > highscores[TOP_SIZE - 1]->score) {
+			return true;
+		}
 		return false;
 	}
 }
 
-void Highscore::LoadHighscore(char* name, int score) {
+void Highscore::LoadHighscore(char name[NAME_LENGTH], int score) {
 	Highscore user(name, score);
 }
 
@@ -50,30 +40,58 @@ Highscore** Highscore::LoadFromFile() {
 	Highscore** highscores = new Highscore*[10];
 	fstream file;
 	file.open("highscores.txt", ios::in);
+	char name[NAME_LENGTH];
 	if (!file.good())
 	{
+		strcpy(name, "-");
 		for (int l = 1; l <= 10; l++) {
-			highscores[l-1] = new Highscore("", 0, l);
+			highscores[l-1] = new Highscore(name, 0, l);
 		}
 	}
 	else {
 		int l = 1;
-		string name;
-		const char* nameC = new char[17];
-		int score;
+		int score = 0;
 		while (!file.eof() ) {
 			file >> score;
+			file >> name;
 			if (file.eof())
 				break;
-			file >> name;
-			nameC = name.c_str();
-			highscores[l-1] = new Highscore(nameC, score, l);
+			highscores[l-1] = new Highscore(name, score, l);
 			l++;
 		}
-		for (int l = 1; l <= 10; l++) {
-			highscores[l-1] = new Highscore("", 0, l);
+		strcpy(name, "-");
+		for (; l <= 10; l++) {
+			highscores[l-1] = new Highscore(name, 0, l);
 		}
 	}
 	file.close();
 	return highscores;
+}
+
+void Highscore::SaveAll(Highscore *highscores[TOP_SIZE]) {
+	fstream file;
+	file.open("highscores.txt", ios::out);
+
+	Sort(highscores);
+	for (int i = 0; i < TOP_SIZE; i++) {
+		file << highscores[i]->score << ' ' << highscores[i]->name << endl;
+	}
+	file.close();
+}
+
+void Highscore::Sort(Highscore *highscores[TOP_SIZE]) {
+	Highscore *helper;
+	for (int i = 0; i < TOP_SIZE; i++) {
+		for (int j = 0; j < TOP_SIZE-i-1; j++) {
+			if (highscores[j]->score < highscores[j + 1]->score) {
+				helper = highscores[j + 1];
+				highscores[j + 1] = highscores[j];
+				highscores[j] = helper;
+			}
+		}
+	}
+
+	for (int pos = 1; pos <= TOP_SIZE; pos++) {
+		highscores[pos - 1]->position = pos;
+	}
 }
