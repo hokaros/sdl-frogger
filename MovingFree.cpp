@@ -1,12 +1,34 @@
 #include "MovingFree.h"
 
-MovingFree::MovingFree(Area a) 
-	:MovingFree(a, -1000000, 1000000, 1000000, -1000000){
+MovingFree::MovingFree(Area a, std::string bmpBaseName)
+	:MovingFree(a, -1000000, 1000000, 1000000, -1000000, bmpBaseName){
 }
 
-MovingFree::MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary) 
+MovingFree::MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary, std::string bmpBaseName)
 	:Moving(a, ZERO_VECTOR){
 	facing = Direction::Up;
+	bmpUp = bmp;
+	std::string fullName = "graphics/" + bmpBaseName + "Left.bmp";
+	bmpLeft = SDL_LoadBMP(fullName.c_str());
+	if (bmpLeft == NULL) {
+		printf("SDL_LoadBMP(%s) error: %s\n", SDL_GetError(), fullName.c_str());
+		delete(this);
+		return;
+	}
+	fullName = "graphics/" + bmpBaseName + "Down.bmp";
+	bmpDown = SDL_LoadBMP(fullName.c_str());
+	if (bmpLeft == NULL) {
+		printf("SDL_LoadBMP(%s) error: %s\n", SDL_GetError(), fullName.c_str());
+		delete(this);
+		return;
+	}
+	fullName = "graphics/" + bmpBaseName + "Right.bmp";
+	bmpRight = SDL_LoadBMP(fullName.c_str());
+	if (bmpLeft == NULL) {
+		printf("SDL_LoadBMP(%s) error: %s\n", SDL_GetError(), fullName.c_str());
+		delete(this);
+		return;
+	}
 	moving = false;
 	targetPos = { x, y };
 	moveAxis = NULL;
@@ -15,6 +37,28 @@ MovingFree::MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBou
 	this->rightBoundary = rightBoundary;
 	this->bottomBoundary = bottomBoundary;
 	this->leftBoundary = leftBoundary;
+}
+
+SDL_Surface* MovingFree::GetBMP(Direction dir) {
+	switch (dir) {
+	case Direction::Up:
+		return bmpUp;
+	case Direction::Right:
+		return bmpRight;
+	case Direction::Down:
+		return bmpDown;
+	case Direction::Left:
+		return bmpLeft;
+	default:
+		return bmp;
+	}
+}
+
+void MovingFree::Turn(Direction target) {
+	if (target != facing) {
+		bmp = GetBMP(target);
+		facing = target;
+	}
 }
 
 void MovingFree::Move(Direction direction) {
@@ -58,6 +102,7 @@ void MovingFree::Move(Direction direction) {
 				targetPos.y = topBoundary;
 			break;
 		}
+		Turn(direction);
 		velocity = ZERO_VECTOR;
 	}
 	else {

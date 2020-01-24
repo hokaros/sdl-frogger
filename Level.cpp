@@ -1,5 +1,6 @@
 #include "Level.h"
 #include <string>
+using namespace std;
 
 Level::Level(SDL_Surface* screen) {
 	this->screen = screen;
@@ -7,6 +8,7 @@ Level::Level(SDL_Surface* screen) {
 	background = SDL_LoadBMP("graphics/background1.bmp");
 	if (background == NULL) {
 		printf("SDL_LoadBMP(graphics/background1.bmp) error: %s\n", SDL_GetError());
+		delete(this);
 		return;
 	}
 	mapBottomBorder = background->h;
@@ -83,18 +85,21 @@ Level::~Level() {
 }
 
 void Level::LoadPlayer() {
-	SDL_Surface* froggerSf = SDL_LoadBMP("graphics/frogger.bmp");
+	string baseName = "froggerSmooth";
+	string fullName = "graphics/" + baseName + ".bmp";
+	SDL_Surface* froggerSf = SDL_LoadBMP(fullName.c_str());
 	if (froggerSf == NULL) {
-		printf("SDL_LoadBMP(graphics/frogger.bmp) error: %s\n", SDL_GetError());
+		printf("SDL_LoadBMP(%s) error: %s\n", SDL_GetError(), fullName.c_str());
+		delete(this);
 		return;
 	}
-	Area frogger(mapLeftBorder, mapBottomBorder - froggerSf->h, froggerSf, screen);
-	player = new MovingFree(frogger, mapTopBorder, mapRightBorder, mapBottomBorder, mapLeftBorder);
+	Area frogger(mapLeftBorder, mapBottomBorder - ROW_HEIGHT, froggerSf, screen);
+	player = new MovingFree(frogger, mapTopBorder, mapRightBorder, mapBottomBorder, mapLeftBorder, baseName);
 }
 
 int Level::RowAdvancement(short row) {
 	//odleg³oœæ od do³u mapy
-	int distance = -(player->y-mapBottomBorder);
+	int distance = mapBottomBorder - player->y;
 	int currentRow = distance / ROW_HEIGHT;
 	if (currentRow <= row)
 		return 0;
@@ -107,6 +112,7 @@ void Level::LoadCars(unsigned short streetRow, unsigned short count, Vector velo
 	SDL_Surface* carSf = SDL_LoadBMP(spritePath);
 	if (carSf == NULL) {
 		printf("SDL_LoadBMP(%s) error: %s\n", spritePath, SDL_GetError());
+		delete(this);
 	}
 	Area carA(mapLeftBorder, mapBottomBorder - ROW_HEIGHT * (streetRow+1), carSf, screen);
 	Killing*** cars;
@@ -158,6 +164,7 @@ void Level::LoadTurtleGroups(unsigned short riverRow, unsigned short count, Vect
 	SDL_Surface* turtleSf = SDL_LoadBMP("graphics/turtle.bmp");
 	if (turtleSf == NULL) {
 		printf("SDL_LoadBMP(graphics/turtle.bmp) error: %s\n", SDL_GetError());
+		delete(this);
 	}
 	Area turtleA(mapLeftBorder, mapBottomBorder - ROW_HEIGHT * (riverRow + 7), turtleSf, screen);
 	TurtleGroup*** turtles;
@@ -226,6 +233,7 @@ void Level::LoadLogs(unsigned short riverRow, unsigned short count, Vector veloc
 	SDL_Surface* logSf = SDL_LoadBMP(spritePath);
 	if (logSf == NULL) {
 		printf("SDL_LoadBMP(%s) error: %s\n", spritePath, SDL_GetError());
+		delete(this);
 	}
 	Area logA(mapLeftBorder, mapBottomBorder - ROW_HEIGHT * (riverRow + 7), logSf, screen);
 
