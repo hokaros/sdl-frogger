@@ -1,8 +1,12 @@
 #pragma once
 #include "Moving.h"
+#include "Animation.h"
+#include <sstream>
 #define JUMP_DISTANCE 32
 #define JUMP_SPEED 100
 #define DIRECTIONS 4
+#define MOVE_ANIMATION_FRAMES 10
+using namespace std;
 /*
 Klasa, której obiekty
 poruszaj¹ siê we wszystkie strony
@@ -14,11 +18,11 @@ class MovingFree :
 {
 protected:
 	Direction facing;
-	SDL_Surface* bmpUp;
-	SDL_Surface* bmpRight;
-	SDL_Surface* bmpDown;
-	SDL_Surface* bmpLeft;
-	SDL_Surface* GetBMP(Direction moveDirection);
+	Animation* GetMove(Direction moveDirection);
+	Animation* moveUp;
+	Animation* moveRight;
+	Animation* moveDown;
+	Animation* moveLeft;
 	void Turn(Direction target);
 
 	//granice ruchu
@@ -35,8 +39,8 @@ public:
 	//po zainicjowaniu ruchu pozycja d¹¿y do docelowej
 	VectorInt targetPos;
 
-	MovingFree(Area a, std::string bmpBaseName);
-	MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary, std::string bmpBaseName);
+	MovingFree(Area a, string bmpBaseName);
+	MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary, string bmpBaseName);
 	void Move(Direction direction);
 	void MoveByVector(VectorInt vector);
 	void SetPosition(VectorInt position);

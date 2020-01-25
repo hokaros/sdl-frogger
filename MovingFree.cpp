@@ -1,34 +1,44 @@
 #include "MovingFree.h"
 
-MovingFree::MovingFree(Area a, std::string bmpBaseName)
+MovingFree::MovingFree(Area a, string bmpBaseName)
 	:MovingFree(a, -1000000, 1000000, 1000000, -1000000, bmpBaseName){
 }
 
-MovingFree::MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary, std::string bmpBaseName)
+MovingFree::MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBoundary, int leftBoundary, string bmpBaseName)
 	:Moving(a, ZERO_VECTOR){
 	facing = Direction::Up;
-	bmpUp = bmp;
-	std::string fullName = "graphics/" + bmpBaseName + "Left.bmp";
-	bmpLeft = SDL_LoadBMP(fullName.c_str());
-	if (bmpLeft == NULL) {
-		printf("SDL_LoadBMP(%s) error: %s\n", SDL_GetError(), fullName.c_str());
-		delete(this);
-		return;
+	//wczytywanie animacji
+	//loading animations
+	string fullName;
+	SDL_Surface** bmps = new SDL_Surface*[MOVE_ANIMATION_FRAMES];
+	int i;
+	for (i = 0; i < MOVE_ANIMATION_FRAMES; i++) {
+		fullName = "graphics/animations/" + bmpBaseName + "Up" + "/" + bmpBaseName + "Up-" + to_string(i) + ".bmp";
+		bmps[i] = SDL_LoadBMP(fullName.c_str());
 	}
-	fullName = "graphics/" + bmpBaseName + "Down.bmp";
-	bmpDown = SDL_LoadBMP(fullName.c_str());
-	if (bmpLeft == NULL) {
-		printf("SDL_LoadBMP(%s) error: %s\n", SDL_GetError(), fullName.c_str());
-		delete(this);
-		return;
+	moveUp = new Animation(MOVE_ANIMATION_FRAMES, bmps);
+
+	bmps = new SDL_Surface * [MOVE_ANIMATION_FRAMES];
+	for (i = 0; i < MOVE_ANIMATION_FRAMES; i++) {
+		fullName = "graphics/animations/" + bmpBaseName + "Right" + "/" + bmpBaseName + "Right-" + to_string(i) + ".bmp";
+		bmps[i] = SDL_LoadBMP(fullName.c_str());
 	}
-	fullName = "graphics/" + bmpBaseName + "Right.bmp";
-	bmpRight = SDL_LoadBMP(fullName.c_str());
-	if (bmpLeft == NULL) {
-		printf("SDL_LoadBMP(%s) error: %s\n", SDL_GetError(), fullName.c_str());
-		delete(this);
-		return;
+	moveRight = new Animation(MOVE_ANIMATION_FRAMES, bmps);
+
+	bmps = new SDL_Surface * [MOVE_ANIMATION_FRAMES];
+	for (i = 0; i < MOVE_ANIMATION_FRAMES; i++) {
+		fullName = "graphics/animations/" + bmpBaseName + "Down" + "/" + bmpBaseName + "Down-" + to_string(i) + ".bmp";
+		bmps[i] = SDL_LoadBMP(fullName.c_str());
 	}
+	moveDown = new Animation(MOVE_ANIMATION_FRAMES, bmps);
+
+	bmps = new SDL_Surface * [MOVE_ANIMATION_FRAMES];
+	for (i = 0; i < MOVE_ANIMATION_FRAMES; i++) {
+		fullName = "graphics/animations/" + bmpBaseName+"Left" + "/" + bmpBaseName + "Left-" + to_string(i) + ".bmp";
+		bmps[i] = SDL_LoadBMP(fullName.c_str());
+	}
+	moveLeft = new Animation(MOVE_ANIMATION_FRAMES, bmps);
+
 	moving = false;
 	targetPos = { x, y };
 	moveAxis = NULL;
@@ -39,26 +49,23 @@ MovingFree::MovingFree(Area a, int topBoundary, int rightBoundary, int bottomBou
 	this->leftBoundary = leftBoundary;
 }
 
-SDL_Surface* MovingFree::GetBMP(Direction dir) {
+Animation* MovingFree::GetMove(Direction dir) {
 	switch (dir) {
 	case Direction::Up:
-		return bmpUp;
+		return moveUp;
 	case Direction::Right:
-		return bmpRight;
+		return moveRight;
 	case Direction::Down:
-		return bmpDown;
+		return moveDown;
 	case Direction::Left:
-		return bmpLeft;
+		return moveLeft;
 	default:
-		return bmp;
+		return moveUp;
 	}
 }
 
 void MovingFree::Turn(Direction target) {
-	if (target != facing) {
-		bmp = GetBMP(target);
-		facing = target;
-	}
+	facing = target;
 }
 
 void MovingFree::Move(Direction direction) {
@@ -125,6 +132,10 @@ void MovingFree::ProcessState(double deltaTime) {
 
 		if (targetPos.x == x && targetPos.y == y){
 			moving = false;
+			bmp = GetMove(facing)->End();
+		}
+		else {
+			bmp = GetMove(facing)->NextFrame();
 		}
 	}
 	else {
@@ -146,4 +157,5 @@ void MovingFree::SetPosition(VectorInt position) {
 	x = position.x;
 	y = position.y;
 	targetPos = position;
+	bmp = moveUp->FirstFrame();
 }

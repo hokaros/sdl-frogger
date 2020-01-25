@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Area.cpp" />
     <ClCompile Include="Attachable.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -41,6 +42,7 @@
     <Image Include="eti.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Area.h" />
     <ClInclude Include="Attachable.h" />
     <ClInclude Include="Draw.h" />
